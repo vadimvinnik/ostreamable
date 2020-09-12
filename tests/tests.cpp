@@ -2,6 +2,7 @@
 
 #include <sstream>
 #include <string>
+#include <vector>
 
 #include <catch.hpp>
 
@@ -119,6 +120,33 @@ TEST_CASE("value assignment changes type")
 
   wrapped = value3;
   s << wrapped;
+
+  auto const expected
+    = std::to_string(value1)
+    + value2
+    + custom_streamable::as_string;
+
+  CHECK(s.str() == expected);
+}
+
+TEST_CASE("heterogeneous container")
+{
+  auto const value1 { 1002 };
+  std::string const value2 { "abcde" };
+  custom_streamable const value3;
+
+  std::vector<ostreamable> v;
+
+  v.emplace_back(value1);
+  v.emplace_back(value2);
+  v.emplace_back(value3);
+
+  std::ostringstream s;
+
+  for (auto const& x : v)
+  {
+    s << x;
+  }
 
   auto const expected
     = std::to_string(value1)
