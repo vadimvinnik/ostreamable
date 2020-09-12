@@ -67,6 +67,21 @@ TEST_CASE("custom streamable object")
   CHECK(s.str() == custom_streamable::as_string);
 }
 
+TEST_CASE("assigning an empty wrapper")
+{
+  auto const value { 1002 };
+
+  ostreamable wrapped { value };
+
+  wrapped = ostreamable{};
+
+  std::ostringstream s;
+
+  s << wrapped;
+
+  CHECK(s.str().empty());
+}
+
 TEST_CASE("wrapper assignment changes type")
 {
   auto const value1 { 1002 };
