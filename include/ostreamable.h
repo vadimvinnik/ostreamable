@@ -68,6 +68,8 @@ public:
   void to_stream(std::ostream &s) const;
 
 private:
+  ostreamable_impl_base_ptr clone() const;
+
   ostreamable_impl_base_ptr impl_;
 };
 

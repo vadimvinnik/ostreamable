@@ -2,12 +2,10 @@
 
 ostreamable_impl_base::~ostreamable_impl_base() = default;
 
-// ostreamable::
-
 ostreamable::ostreamable() = default;
 
 ostreamable::ostreamable(ostreamable const& other) :
-  impl_{ other.impl_->clone() }
+  impl_{ other.clone() }
 {}
 
 ostreamable::ostreamable(ostreamable&&) = default;
@@ -16,7 +14,7 @@ ostreamable& ostreamable::operator=(ostreamable const& other)
 {
   if (&other != this)
   {
-    impl_ = other.impl_->clone();
+    impl_ = other.clone();
   }
 
   return *this;
@@ -30,6 +28,13 @@ void ostreamable::to_stream(std::ostream &s) const
   {
     impl_->to_stream(s);
   }
+}
+
+ostreamable_impl_base_ptr ostreamable::clone() const
+{
+  return impl_
+    ? impl_->clone()
+    : ostreamable_impl_base_ptr {};
 }
 
 std::ostream& operator<<(std::ostream &s, ostreamable const& x)
