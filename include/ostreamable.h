@@ -1,5 +1,8 @@
+#pragma once
+
 #include <memory>
 #include <ostream>
+#include <type_traits>
 #include <utility>
 
 struct ostreamable_impl_base;
@@ -33,19 +36,24 @@ public:
   }
 
 private:
-  T value_;
+  std::decay_t<T> value_;
 };
 
 #define OSTREAMABLE_MAKE_IMPL(arg_)      \
   std::make_unique<ostreamable_impl<T>>( \
     std::forward<T>(arg_))
 
+class ostreamable;
+
+template <typename T>
+using not_ostreamable = std::enable_if_t<!std::is_same_v<ostreamable, std::decay_t<T>>>;
+
 class ostreamable
 {
 public:
   ostreamable();
 
-  template <typename T>
+  template <typename T, typename = not_ostreamable<T>>
   ostreamable(T&& value) :
     impl_{ OSTREAMABLE_MAKE_IMPL(value) }
   {}
@@ -58,7 +66,7 @@ public:
 
   ostreamable& operator=(ostreamable&&);
 
-  template <typename T>
+  template <typename T, typename = not_ostreamable<T>>
   ostreamable& operator=(T&& value)
   {
     impl_ = OSTREAMABLE_MAKE_IMPL(value);
@@ -76,4 +84,3 @@ private:
 #undef OSTREAMABLE_MAKE_IMPL
 
 std::ostream& operator<<(std::ostream &s, ostreamable const& x);
-
